@@ -1,0 +1,43 @@
+{
+  "document_name": "Cash Flow 2026.pdf",
+  "document_type": "Cash Flow Statement",
+  "processing_status": "PASS",
+  "extraction": {
+    "reporting_period_1": "2026",
+    "operating_cash_flow_period_1": 113506.38,
+    "investing_cash_flow_period_1": 6362.72,
+    "financing_cash_flow_period_1": -59004.85,
+    "foreign_exchange_effect_period_1": 1113.9,
+    "net_cash_increase_period_1": 61978.15,
+    "opening_cash_balance_period_1": 249947.9,
+    "closing_cash_balance_period_1": 311926.05
+  },
+  "financial_validation": [
+    {
+      "rule": "Net Cash Increase Reconciliation",
+      "formula": "Operating + Investing + Financing + Foreign Exchange Effect = Net Cash Increase",
+      "inputs": {
+        "operating_cash_flow": 113506.38,
+        "investing_cash_flow": 6362.72,
+        "financing_cash_flow": -59004.85,
+        "foreign_exchange_effect": 1113.9
+      },
+      "calculated": 61978.15,
+      "reported": 61978.15,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Closing Cash Balance Reconciliation",
+      "formula": "Opening Cash Balance + Net Cash Increase = Closing Cash Balance",
+      "inputs": {
+        "opening_cash_balance": 249947.9,
+        "net_cash_increase": 61978.15
+      },
+      "calculated": 311926.05,
+      "reported": 311926.05,
+      "variance": 0.0,
+      "status": "PASS"
+    }
+  ]
+}

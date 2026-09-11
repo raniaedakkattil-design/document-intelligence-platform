@@ -1,0 +1,69 @@
+{
+  "document_name": "Consolidated Profit & Loss 2026.pdf",
+  "document_type": "Profit and Loss",
+  "processing_status": "PASS",
+  "extraction": {
+    "reporting_period_1": "2026",
+    "interest_earned_period_1": 348615.15,
+    "other_income_period_1": 146847.66,
+    "total_income_period_1": 495462.81,
+    "interest_expended_period_1": 185491.23,
+    "operating_expenses_period_1": 181173.91,
+    "provisions_period_1": 49578.21,
+    "total_expenditure_period_1": 416243.35,
+    "profit_before_minority_period_1": 79219.46,
+    "minority_interest_period_1": 3193.49,
+    "net_profit_period_1": 76025.97
+  },
+  "financial_validation": [
+    {
+      "rule": "Total Income Reconciliation",
+      "formula": "Interest Earned + Other Income = Total Income",
+      "inputs": {
+        "interest_earned": 348615.15,
+        "other_income": 146847.66
+      },
+      "calculated": 495462.81,
+      "reported": 495462.81,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Total Expenditure Reconciliation",
+      "formula": "Interest Expended + Operating Expenses + Provisions = Total Expenditure",
+      "inputs": {
+        "interest_expended": 185491.23,
+        "operating_expenses": 181173.91,
+        "provisions": 49578.21
+      },
+      "calculated": 416243.35,
+      "reported": 416243.35,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Profit Before Minority Reconciliation",
+      "formula": "Total Income - Total Expenditure = Profit Before Minority",
+      "inputs": {
+        "total_income": 495462.81,
+        "total_expenditure": 416243.35
+      },
+      "calculated": 79219.46,
+      "reported": 79219.46,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Net Profit Reconciliation",
+      "formula": "Profit Before Minority - Minority Interest = Net Profit",
+      "inputs": {
+        "profit_before_minority": 79219.46,
+        "minority_interest": 3193.49
+      },
+      "calculated": 76025.97,
+      "reported": 76025.97,
+      "variance": 0.0,
+      "status": "PASS"
+    }
+  ]
+}

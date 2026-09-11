@@ -1,0 +1,88 @@
+{
+  "document_name": "X51005757342.jpg",
+  "document_type": "Invoice",
+  "processing_status": "PASS",
+  "extraction": {
+    "seller_name": "MR. D.I.Y. (M) SDN BHD",
+    "invoice_number": "T1 R000111721",
+    "document_date": "23-03-18 10:43",
+    "currency": "RM",
+    "invoice_items": [
+      {
+        "description": "MESH SPONGE 4S",
+        "quantity": 1,
+        "unit_price": 1.8,
+        "line_total": 1.8
+      },
+      {
+        "description": "BROWN COCO BRUSH 6' VGN",
+        "quantity": 2,
+        "unit_price": 2.1,
+        "line_total": 4.2
+      },
+      {
+        "description": "PLASTIC BAGS",
+        "quantity": 1,
+        "unit_price": 0.2,
+        "line_total": 0.2
+      }
+    ],
+    "subtotal": 6.2,
+    "tax_amount": 0.35,
+    "tax_rate": 6.0,
+    "tax_included": true,
+    "total_amount": 6.2,
+    "cash_paid": 100.0,
+    "change_amount": 93.8
+  },
+  "financial_validation": [
+    {
+      "rule": "Invoice Line Item 1",
+      "formula": "Quantity \u00d7 Unit Price = Line Total",
+      "calculated": 1.8,
+      "reported": 1.8,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Invoice Line Item 2",
+      "formula": "Quantity \u00d7 Unit Price = Line Total",
+      "calculated": 4.2,
+      "reported": 4.2,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Invoice Line Item 3",
+      "formula": "Quantity \u00d7 Unit Price = Line Total",
+      "calculated": 0.2,
+      "reported": 0.2,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Invoice Subtotal Reconciliation",
+      "formula": "Sum of Line Totals = Subtotal",
+      "calculated": 6.2,
+      "reported": 6.2,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Invoice Tax-Inclusive Total Reconciliation",
+      "formula": "Sum of Line Totals = Tax-Inclusive Total",
+      "calculated": 6.2,
+      "reported": 6.2,
+      "variance": 0.0,
+      "status": "PASS"
+    },
+    {
+      "rule": "Invoice Change Reconciliation",
+      "formula": "Cash Paid - Total = Change",
+      "calculated": 93.8,
+      "reported": 93.8,
+      "variance": 0.0,
+      "status": "PASS"
+    }
+  ]
+}

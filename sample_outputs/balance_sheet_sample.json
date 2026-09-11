@@ -1,0 +1,30 @@
+{
+  "document_name": "Balance Sheet 2026.pdf",
+  "document_type": "Balance Sheet",
+  "processing_status": "PASS",
+  "extraction": {
+    "company_name": "HDFC Bank",
+    "reporting_period_1": "2026",
+    "reporting_period_2": "2025",
+    "currency": "crore",
+    "unit": null,
+    "total_assets_period_1": 4908040.84,
+    "total_assets_period_2": null,
+    "total_capital_and_liabilities_period_1": 4908040.84,
+    "total_capital_and_liabilities_period_2": null
+  },
+  "financial_validation": [
+    {
+      "rule": "Balance Sheet Reconciliation",
+      "formula": "Total Assets = Total Capital and Liabilities",
+      "inputs": {
+        "total_assets": 4908040.84,
+        "total_capital_and_liabilities": 4908040.84
+      },
+      "calculated": 4908040.84,
+      "reported": 4908040.84,
+      "variance": 0.0,
+      "status": "PASS"
+    }
+  ]
+}
