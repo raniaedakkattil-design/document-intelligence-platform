@@ -10,3 +10,4 @@ PyMuPDF
 Pillow
 pytest
 httpx
+psycopg2-binary
