@@ -17,7 +17,7 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 
 
 EXTRACTION_PROMPTS = {
-    "invoice": """
+"invoice": """
 You are extracting information from an invoice.
 
 Extract ALL meaningful visible information from the document.
@@ -28,6 +28,13 @@ Important rules:
 - Extract every visible invoice line item.
 - Preserve quantities, prices, totals, tax information and payment information exactly.
 - Preserve negative values if present.
+- Identify whether the displayed total already includes tax/GST.
+- Set tax_included to true only when the document explicitly indicates that tax/GST is included in the displayed total.
+- Set tax_included to false only when the document explicitly indicates that tax/GST is excluded from the displayed total.
+- If it cannot be determined from the document, set tax_included to null.
+- Extract the tax amount and tax rate when explicitly shown.
+- For phrases such as "GST included", "tax included", or "including GST", treat the displayed total as tax-inclusive.
+- Do not calculate or invent a tax amount that is not explicitly present.
 - Include page number and source text when possible.
 """,
 
@@ -131,41 +138,37 @@ def run_validation(
         ]
 
     if document_type == "profit and loss":
-        return validate_profit_and_loss(
-            interest_earned=extracted.get(
-                "interest_earned_period_1"
-            ),
-            other_income=extracted.get(
-                "other_income_period_1"
-            ),
-            total_income=extracted.get(
-                "total_income_period_1"
-            ),
-            interest_expended=extracted.get(
-                "interest_expended_period_1"
-            ),
-            operating_expenses=extracted.get(
-                "operating_expenses_period_1"
-            ),
-            provisions=extracted.get(
-                "provisions_period_1"
-            ),
-            total_expenditure=extracted.get(
-                "total_expenditure_period_1"
-            ),
-            profit_before_minority=extracted.get(
-                "profit_before_minority_period_1"
-            ),
-            minority_interest=extracted.get(
-                "minority_interest_period_1"
-            ),
-            net_profit=extracted.get(
-                "net_profit_period_1"
-            ),
+        period_1_results = validate_profit_and_loss(
+            interest_earned=extracted.get("interest_earned_period_1"),
+            other_income=extracted.get("other_income_period_1"),
+            total_income=extracted.get("total_income_period_1"),
+            interest_expended=extracted.get("interest_expended_period_1"),
+            operating_expenses=extracted.get("operating_expenses_period_1"),
+            provisions=extracted.get("provisions_period_1"),
+            total_expenditure=extracted.get("total_expenditure_period_1"),
+            profit_before_minority=extracted.get("profit_before_minority_period_1"),
+            minority_interest=extracted.get("minority_interest_period_1"),
+            net_profit=extracted.get("net_profit_period_1"),
         )
 
+        period_2_results = validate_profit_and_loss(
+            interest_earned=extracted.get("interest_earned_period_2"),
+            other_income=extracted.get("other_income_period_2"),
+            total_income=extracted.get("total_income_period_2"),
+            interest_expended=extracted.get("interest_expended_period_2"),
+            operating_expenses=extracted.get("operating_expenses_period_2"),
+            provisions=extracted.get("provisions_period_2"),
+            total_expenditure=extracted.get("total_expenditure_period_2"),
+            profit_before_minority=extracted.get("profit_before_minority_period_2"),
+            minority_interest=extracted.get("minority_interest_period_2"),
+            net_profit=extracted.get("net_profit_period_2"),
+        )
+
+        return period_1_results + period_2_results
+        
+
     if document_type == "cash flow":
-        return validate_cash_flow(
+        period_1_results = validate_cash_flow(
             operating_cash_flow=extracted.get(
                 "operating_cash_flow_period_1"
             ),
@@ -189,6 +192,32 @@ def run_validation(
             ),
         )
 
+        period_2_results = validate_cash_flow(
+            operating_cash_flow=extracted.get(
+                "operating_cash_flow_period_2"
+            ),
+            investing_cash_flow=extracted.get(
+                "investing_cash_flow_period_2"
+            ),
+            financing_cash_flow=extracted.get(
+                "financing_cash_flow_period_2"
+            ),
+            foreign_exchange_effect=extracted.get(
+                "foreign_exchange_effect_period_2"
+            ),
+            net_cash_increase=extracted.get(
+                "net_cash_increase_period_2"
+            ),
+            opening_cash_balance=extracted.get(
+                "opening_cash_balance_period_2"
+            ),
+            closing_cash_balance=extracted.get(
+                "closing_cash_balance_period_2"
+            ),
+        )
+
+        return period_1_results + period_2_results
+
     if document_type == "invoice":
         items = extracted.get("invoice_items", [])
 
@@ -196,6 +225,7 @@ def run_validation(
             invoice_items=items,
             subtotal=extracted.get("subtotal"),
             tax_amount=extracted.get("tax_amount"),
+            tax_included=extracted.get("tax_included"),
             total_amount=extracted.get("total_amount"),
             cash_paid=extracted.get("cash_paid"),
             change_amount=extracted.get("change_amount"),

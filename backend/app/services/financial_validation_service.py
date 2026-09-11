@@ -365,6 +365,7 @@ def validate_invoice(
     invoice_items: list[dict[str, Any]],
     subtotal: float | None,
     tax_amount: float | None,
+    tax_included: bool | None,
     total_amount: float | None,
     cash_paid: float | None,
     change_amount: float | None,
@@ -454,15 +455,14 @@ def validate_invoice(
         })
 
     # Subtotal + Tax = Total
+    # Tax reconciliation
     if (
         subtotal is not None
         and tax_amount is not None
         and total_amount is not None
+        and tax_included is False
     ):
-        calculated = round(
-            subtotal + tax_amount,
-            2,
-        )
+        calculated = round(subtotal + tax_amount, 2)
 
         comparison = compare_values(
             calculated=calculated,
@@ -475,9 +475,34 @@ def validate_invoice(
             "inputs": {
                 "subtotal": subtotal,
                 "tax_amount": tax_amount,
+                "tax_included": tax_included,
             },
             **comparison,
         })
+
+    elif (
+        tax_included is True
+        and total_amount is not None
+        and line_totals
+    ):
+        calculated = round(sum(line_totals), 2)
+
+        comparison = compare_values(
+            calculated=calculated,
+            reported=total_amount,
+        )
+
+        results.append({
+            "rule": "Invoice Tax-Inclusive Total Reconciliation",
+            "formula": "Sum of Line Totals = Tax-Inclusive Total",
+            "inputs": {
+                "line_totals": line_totals,
+                "tax_amount": tax_amount,
+                "tax_included": tax_included,
+            },
+            **comparison,
+        })
+
     else:
         results.append({
             "rule": "Invoice Tax Reconciliation",
@@ -485,6 +510,7 @@ def validate_invoice(
             "inputs": {
                 "subtotal": subtotal,
                 "tax_amount": tax_amount,
+                "tax_included": tax_included,
             },
             "calculated": None,
             "reported": total_amount,

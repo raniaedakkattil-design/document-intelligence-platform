@@ -21,16 +21,18 @@ async def process_uploaded_document(
     document_type: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    filename = file.filename or "uploaded_document"
+
     try:
         result = process_document(
             file=file.file,
-            filename=file.filename or "uploaded_document",
+            filename=filename,
             content_type=file.content_type,
             document_type=document_type,
         )
 
         document = Document(
-            document_name=file.filename or "uploaded_document",
+            document_name=filename,
             document_type=result["document_type"],
             processing_status=result["processing_status"],
             result_json=json.dumps(result),
@@ -43,21 +45,72 @@ async def process_uploaded_document(
         return result
 
     except DocumentValidationError as exc:
+        failed_result = {
+            "document_name": filename,
+            "document_type": document_type,
+            "processing_status": "FAILED",
+            "error": str(exc),
+        }
+
+        document = Document(
+            document_name=filename,
+            document_type=document_type,
+            processing_status="FAILED",
+            result_json=json.dumps(failed_result),
+        )
+
+        db.add(document)
+        db.commit()
+
         raise HTTPException(
             status_code=400,
-            detail=str(exc),
+            detail=failed_result,
         )
 
     except ValueError as exc:
+        failed_result = {
+            "document_name": filename,
+            "document_type": document_type,
+            "processing_status": "FAILED",
+            "error": str(exc),
+        }
+
+        document = Document(
+            document_name=filename,
+            document_type=document_type,
+            processing_status="FAILED",
+            result_json=json.dumps(failed_result),
+        )
+
+        db.add(document)
+        db.commit()
+
         raise HTTPException(
             status_code=400,
-            detail=str(exc),
+            detail=failed_result,
         )
 
     except Exception as exc:
+        failed_result = {
+            "document_name": filename,
+            "document_type": document_type,
+            "processing_status": "FAILED",
+            "error": f"PROCESSING_ERROR: {str(exc)}",
+        }
+
+        document = Document(
+            document_name=filename,
+            document_type=document_type,
+            processing_status="FAILED",
+            result_json=json.dumps(failed_result),
+        )
+
+        db.add(document)
+        db.commit()
+
         raise HTTPException(
             status_code=500,
-            detail=f"PROCESSING_ERROR: {str(exc)}",
+            detail=failed_result,
         )
 
 

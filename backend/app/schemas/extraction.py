@@ -131,6 +131,7 @@ class InvoiceExtraction(BaseModel):
     subtotal: float | None = None
     tax_amount: float | None = None
     tax_rate: float | None = None
+    tax_included: bool | None = None
     total_amount: float | None = None
     cash_paid: float | None = None
     change_amount: float | None = None

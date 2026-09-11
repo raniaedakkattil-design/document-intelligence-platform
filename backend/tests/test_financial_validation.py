@@ -85,7 +85,8 @@ def test_invoice():
             },
         ],
         subtotal=6.20,
-        tax_amount=None,
+        tax_amount=0.35,
+        tax_included=True,
         total_amount=6.20,
         cash_paid=100.00,
         change_amount=93.80,
@@ -95,5 +96,5 @@ def test_invoice():
     assert results[1]["status"] == "PASS"
     assert results[2]["status"] == "PASS"
     assert results[3]["status"] == "PASS"
-    assert results[4]["status"] == "NOT_APPLICABLE"
+    assert results[4]["status"] == "PASS"
     assert results[5]["status"] == "PASS"
