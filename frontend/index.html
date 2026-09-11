@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document Intelligence Platform</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #17365d;
+            color: white;
+            padding: 24px 40px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            opacity: 0.85;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #17365d;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .loading {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .summary-box .label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .summary-box .value {
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .status-pass {
+            color: #15803d;
+        }
+
+        .status-fail {
+            color: #b91c1c;
+        }
+
+        .status-na {
+            color: #92400e;
+        }
+
+        .validation-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .validation-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+
+        .validation-status {
+            font-weight: bold;
+        }
+
+        .formula {
+            color: #4b5563;
+            font-size: 14px;
+        }
+
+        .validation-details {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 11px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        .json-button {
+            background: #374151;
+        }
+
+        .json-button:hover {
+            background: #1f2937;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            max-height: 500px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .history-table {
+            overflow-x: auto;
+        }
+
+        .history-table button {
+            margin: 0;
+            padding: 7px 12px;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .empty {
+            color: #6b7280;
+            padding: 10px 0;
+        }
+
+        @media (max-width: 800px) {
+            .form-grid,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Document Intelligence Platform</h1>
+    <p>AI-powered financial document extraction and validation</p>
+</header>
+
+<div class="container">
+
+    <!-- Upload -->
+    <section class="card">
+        <h2>Process Document</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label for="documentType">Document Type</label>
+
+                <select id="documentType">
+                    <option value="Invoice">Invoice</option>
+                    <option value="Balance Sheet">Balance Sheet</option>
+                    <option value="Profit & Loss">Profit & Loss</option>
+                    <option value="Cash Flow">Cash Flow</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="documentFile">Select Document</label>
+
+                <input
+                    type="file"
+                    id="documentFile"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+            </div>
+
+        </div>
+
+        <button id="processButton" onclick="processDocument()">
+            Process Document
+        </button>
+
+        <div id="message" class="message"></div>
+    </section>
+
+
+    <!-- Result -->
+    <section id="resultSection" class="card hidden">
+
+        <h2>Processing Result</h2>
+
+        <div id="summary" class="summary-grid"></div>
+
+        <h3>Financial Validation</h3>
+
+        <div id="validationResults" style="margin-top: 15px;"></div>
+
+        <h3 style="margin-top: 30px;">Extracted Information</h3>
+
+        <div id="extractedInformation" style="margin-top: 15px;"></div>
+
+        <button
+            class="json-button"
+            onclick="toggleJson()"
+        >
+            View Raw JSON
+        </button>
+
+        <div id="jsonContainer" class="hidden" style="margin-top: 15px;">
+            <pre id="rawJson"></pre>
+        </div>
+
+    </section>
+
+
+    <!-- History -->
+    <section class="card">
+
+        <h2>Processing History</h2>
+
+        <div id="historyContainer">
+            <p class="empty">Loading history...</p>
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+    /*
+     * When frontend and backend are served together:
+     *
+     * API_BASE = ""
+     *
+     * During local development:
+     *
+     * http://127.0.0.1:8000
+     */
+    const API_BASE = "";
+
+    async function processDocument() {
+
+        const fileInput = document.getElementById("documentFile");
+        const documentType =
+            document.getElementById("documentType").value;
+
+        const button =
+            document.getElementById("processButton");
+
+        const message =
+            document.getElementById("message");
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+            showMessage(
+                "Please select a document first.",
+                "error"
+            );
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("file", file);
+        formData.append("document_type", documentType);
+
+        button.disabled = true;
+        button.textContent = "Processing...";
+
+        showMessage(
+            "Document is being processed. This may take a little while...",
+            "loading"
+        );
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE}/api/v1/documents/process`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Document processing failed."
+                );
+            }
+
+            showMessage(
+                "Document processed successfully.",
+                "success"
+            );
+
+            displayResult(data);
+
+            loadHistory();
+
+        } catch (error) {
+
+            showMessage(
+                error.message,
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Process Document";
+        }
+    }
+
+
+    function showMessage(text, type) {
+
+        const message =
+            document.getElementById("message");
+
+        message.textContent = text;
+
+        message.className =
+            `message ${type}`;
+
+        message.style.display = "block";
+    }
+
+
+    function displayResult(data) {
+
+        const resultSection =
+            document.getElementById("resultSection");
+
+        resultSection.classList.remove("hidden");
+
+        const extraction =
+            data.extraction || {};
+
+        const summary =
+            document.getElementById("summary");
+
+        summary.innerHTML = `
+            <div class="summary-box">
+                <div class="label">Document</div>
+                <div class="value">
+                    ${escapeHtml(data.document_name || "-")}
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="label">Type</div>
+                <div class="value">
+                    ${escapeHtml(data.document_type || "-")}
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="label">Company</div>
+                <div class="value">
+                    ${escapeHtml(extraction.company_name || "-")}
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="label">Processing Status</div>
+                <div class="value status-pass">
+                    ${escapeHtml(data.processing_status || "-")}
+                </div>
+            </div>
+        `;
+
+        displayValidation(
+            data.financial_validation || []
+        );
+
+        displayExtraction(extraction);
+
+        document.getElementById("rawJson").textContent =
+            JSON.stringify(data, null, 2);
+    }
+
+
+    function displayValidation(results) {
+
+        const container =
+            document.getElementById("validationResults");
+
+        if (!results.length) {
+
+            container.innerHTML =
+                '<p class="empty">No financial validation rules applicable.</p>';
+
+            return;
+        }
+
+        container.innerHTML = results.map(result => {
+
+            let statusClass = "status-na";
+
+            if (result.status === "PASS") {
+                statusClass = "status-pass";
+            }
+
+            if (result.status === "FAIL") {
+                statusClass = "status-fail";
+            }
+
+            return `
+                <div class="validation-item">
+
+                    <div class="validation-header">
+
+                        <strong>
+                            ${escapeHtml(result.rule || "Validation Rule")}
+                        </strong>
+
+                        <span class="validation-status ${statusClass}">
+                            ${escapeHtml(result.status || "NOT_APPLICABLE")}
+                        </span>
+
+                    </div>
+
+                    <div class="formula">
+                        ${escapeHtml(result.formula || "-")}
+                    </div>
+
+                    <div class="validation-details">
+
+                        Calculated:
+                        <strong>
+                            ${formatNumber(result.calculated)}
+                        </strong>
+
+                        &nbsp; | &nbsp;
+
+                        Reported:
+                        <strong>
+                            ${formatNumber(result.reported)}
+                        </strong>
+
+                        &nbsp; | &nbsp;
+
+                        Variance:
+                        <strong>
+                            ${formatNumber(result.variance)}
+                        </strong>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+    }
+
+
+    function displayExtraction(extraction) {
+
+        const container =
+            document.getElementById("extractedInformation");
+
+        let html = "";
+
+        const excludedKeys = [
+            "line_items",
+            "invoice_items"
+        ];
+
+        const fields = Object.entries(extraction)
+            .filter(([key]) => !excludedKeys.includes(key))
+            .filter(([key]) => !key.endsWith("_period_1"))
+            .filter(([key]) => !key.endsWith("_period_2"));
+
+        if (fields.length > 0) {
+
+            html += `
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            ${fields.map(([key, value]) => `
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            ${formatFieldName(key)}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        ${formatValue(value)}
+                                    </td>
+                                </tr>
+                            `).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            `;
+        }
+
+
+        if (
+            extraction.line_items &&
+            extraction.line_items.length > 0
+        ) {
+
+            html += `
+                <h4 style="margin-top:25px;">
+                    Line Items
+                </h4>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Item</th>
+                                <th>Period 1</th>
+                                <th>Value 1</th>
+                                <th>Period 2</th>
+                                <th>Value 2</th>
+                                <th>Page</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            ${extraction.line_items.map(item => `
+                                <tr>
+
+                                    <td>
+                                        ${formatValue(item.category)}
+                                    </td>
+
+                                    <td>
+                                        ${formatValue(item.item)}
+                                    </td>
+
+                                    <td>
+                                        ${formatValue(item.period_1)}
+                                    </td>
+
+                                    <td>
+                                        ${formatNumber(item.value_1)}
+                                    </td>
+
+                                    <td>
+                                        ${formatValue(item.period_2)}
+                                    </td>
+
+                                    <td>
+                                        ${formatNumber(item.value_2)}
+                                    </td>
+
+                                    <td>
+                                        ${formatValue(item.page_number)}
+                                    </td>
+
+                                </tr>
+                            `).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            `;
+        }
+
+
+        if (
+            extraction.invoice_items &&
+            extraction.invoice_items.length > 0
+        ) {
+
+            html += `
+                <h4 style="margin-top:25px;">
+                    Invoice Items
+                </h4>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Line Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            ${extraction.invoice_items.map(item => `
+                                <tr>
+
+                                    <td>
+                                        ${formatValue(item.description)}
+                                    </td>
+
+                                    <td>
+                                        ${formatNumber(item.quantity)}
+                                    </td>
+
+                                    <td>
+                                        ${formatNumber(item.unit_price)}
+                                    </td>
+
+                                    <td>
+                                        ${formatNumber(item.line_total)}
+                                    </td>
+
+                                </tr>
+                            `).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            `;
+        }
+
+
+        container.innerHTML =
+            html || '<p class="empty">No extracted information available.</p>';
+    }
+
+
+    async function loadHistory() {
+
+        const container =
+            document.getElementById("historyContainer");
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE}/api/v1/documents`
+            );
+
+            const documents = await response.json();
+
+            if (!documents.length) {
+
+                container.innerHTML =
+                    '<p class="empty">No documents processed yet.</p>';
+
+                return;
+            }
+
+            container.innerHTML = `
+
+                <div class="history-table">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Document</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Processed At</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            ${documents.map(document => `
+
+                                <tr>
+
+                                    <td>
+                                        ${escapeHtml(document.document_name)}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(document.document_type)}
+                                    </td>
+
+                                    <td class="status-pass">
+                                        ${escapeHtml(document.processing_status)}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(document.processed_at || "-")}
+                                    </td>
+
+                                    <td>
+
+                                        <button
+                                            onclick="viewDocument('${encodeURIComponent(document.document_name)}')"
+                                        >
+                                            View
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+
+                            `).join("")}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            `;
+
+        } catch (error) {
+
+            container.innerHTML =
+                '<p class="empty">Unable to load processing history.</p>';
+        }
+    }
+
+
+    async function viewDocument(encodedName) {
+
+        try {
+
+            const documentName =
+                decodeURIComponent(encodedName);
+
+            const response = await fetch(
+                `${API_BASE}/api/v1/documents/${encodeURIComponent(documentName)}`
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Unable to retrieve document."
+                );
+            }
+
+            displayResult(data);
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        } catch (error) {
+
+            showMessage(
+                error.message,
+                "error"
+            );
+        }
+    }
+
+
+    function toggleJson() {
+
+        const container =
+            document.getElementById("jsonContainer");
+
+        container.classList.toggle("hidden");
+    }
+
+
+    function formatFieldName(value) {
+
+        return value
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, character =>
+                character.toUpperCase()
+            );
+    }
+
+
+    function formatNumber(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return "-";
+        }
+
+        if (typeof value === "number") {
+
+            return value.toLocaleString(
+                undefined,
+                {
+                    maximumFractionDigits: 2
+                }
+            );
+        }
+
+        return escapeHtml(String(value));
+    }
+
+
+    function formatValue(value) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return "-";
+        }
+
+        if (typeof value === "number") {
+            return formatNumber(value);
+        }
+
+        if (typeof value === "object") {
+            return escapeHtml(
+                JSON.stringify(value)
+            );
+        }
+
+        return escapeHtml(String(value));
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    // Load existing database history when page opens.
+    loadHistory();
+
+</script>
+
+</body>
+</html>
