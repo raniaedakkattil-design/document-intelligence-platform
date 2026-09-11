@@ -414,9 +414,15 @@
             const data = await response.json();
 
             if (!response.ok) {
+                const detail = data.detail;
+
+            if (typeof detail === "object" && detail !== null) {
                 throw new Error(
-                    data.detail || "Document processing failed."
+                    detail.error || detail.message || "Document processing failed."
                 );
+            }
+
+            throw new Error(detail || "Document processing failed.");
             }
 
             showMessage(
